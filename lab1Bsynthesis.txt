@@ -1,0 +1,101 @@
+******************************
+* Lab 1b Synthesis Questions *
+******************************
+Name(s):  Luke Sorvik  
+NetID(s): lukesorv
+
+
+-----------------------------------------------------------
+Your friend suggests an alternative data representation for sections in an aisle.
+In this representation, the lowest 8 bits would be used to store an integer
+representing the number of items in a section, and the upper 8 bits would be
+used to store a unique item id. Compared to our current representation 
+(16 bits, 6MSB for id, 10 LSB for section spaces, currently could only have
+10 items in a section) give at least three benefits and at least 1 drawback of this
+new representation.
+
+1) 
+   Benefit 1: Can represent more items in a section.
+With the new representation storing an integer to represent the number of items,
+and the previous representation using binary to represent occupied spaces.
+The new representation would be able to store 2^8 = 256 possible
+items per aisle since we are using the binary to store an integer value.
+Whereas the previous version could only represent 10 items
+in a section since each bit represented 1 item.
+
+   Benefit 2: Can represent more item ids.
+The old representation only had 6 bits for ids, and could only have
+2^6 = 64 possible ids, whereas with 8 bits you would have 2^8 = 256 possible ids.
+
+   Benefit 3: Can get number of Items easier.
+Since the number of items is stored as an integer, instead of having to
+iterate through the bits of the spaces, you can directly mask out the 8
+bits representing the items and cast that to an integer.
+
+
+   Drawback: A lot of the functions built would be incompatable.
+Because of how the functions num_items, toggle space, add_item, remove_item work by
+using bitwise operations, it would be harder to implement those same functions for
+binary that is representing an integer. Using bitwise operations for num_items for example:
+previously I used binary subtraction to get the Least significant 1, and subtracted until the
+spaces were all zeros. But if the spaces were 8 bits instead and those bits represented an integer, the num_items
+function would not work using binary subtraction. 
+
+   Drawback 2: Lack of spacial representation
+In the previous version with 10 bits to represent the spaces on a section of an aisle,
+you could represent where the items were physically. You could shift the order of the items,
+and toggle where items were. But, with the new representation there is no spacial representation,
+the 8 bits would only contain how many items were in a section.
+
+
+-----------------------------------------------------------
+Number representation: Consider the following two statements (noting that the type of y is purposefully omitted):
+y = -1;
+y = 0xFFFFFFFF;
+
+2) Difference? Y/N
+   Yes
+
+   Explain: 
+   0xFFFFFFFF is the hexidecimal representation of:
+   Signed y = -1;
+   and or
+   Unsigned y = 4294967295;
+
+   So the difference is that 0xFFFFFFFF is how the two values are represented in memory, and the type of y (unsigned) or (signed)
+   is how your computer interprets that data in memeory. So although y = 0xFFFFFFFF can be interpreted as y=-1 if it
+   is signed, it is just data in memory and does not represent -1 unless the pointer to y is of the type (signed).
+   Since 0xFFFFFFFF = 1111 1111 ........ 1111 in binary,
+   when we convert that to two's complement (signed) it is -1, and converted in unsigned it is the positive value of 4294967295.
+
+-----------------------------------------------------------
+Floating point: Explain why comparing two floating point numbers with == or != is problematic.
+
+ The suggested equality alternative from lecture involved comparing the difference against a threshold value: 
+ what should be considered in choosing such a threshold?  [2 pt]
+
+3) Explain:
+Floating point numbers are approximations, and are not always accurate.
+For example: float x = 0.1 is actually 0.100000001490116119385
+Because of how floating points are encoded, the only way to represent 0.1 to the closest value is by using multiple different powers of 2^x.
+Because of this the precision of a floating point gets less accurate the further from 0 you go.
+
+In the class example we see that:
+float x = 1.0
+float y = 0.1;
+ for (int i = 0; i < 10; i++) {
+            f2 += 0.1;  // adding 0.1 ten times should = 1
+          }
+
+x == y returns false
+
+We would expect the two numbers to be equal, but because of how 0.1 is not exactly 0.1 
+because of rounding errors(lack of precision) we see that the true values are actually:
+f1 == 1.000000 f2 == 1.0000001192
+
+   Considerations:
+You should consider the magnitude of the numbers you are comparing (how far away from zero they are) because the greater the magnitude means the less accurate
+the numbers are represented as a float which may require you to compare using a larger threshold value. You should set your threshold within a range
+that can tolerate errors that may arrise from comparing using < or >. In this example we only use the 0.1 decimal place so it would be wise to only
+compare within that range (and not with 0.000001 for example): ex: abs(f1 - f2) < 1.1.
+
